@@ -1,0 +1,26 @@
+
+
+
+.purple-high-score {
+    color: #7952b3; 
+}
+
+.align-left {
+    float: left;
+}
+
+.align-right {
+    float: right;
+}
+
+/* Do I need to clearfix? */
+
+.card {
+    border: none;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #7952b3;
+    border-color: #7952b3;
+}
