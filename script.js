@@ -15,13 +15,22 @@
 var cardParentDiv = document.querySelector(".card");
 var cardBody = document.querySelector(".card-body");
 var cardTitle = document.querySelector(".card-title");
-var cardText = document.querySelector(".card-text");
-var cardButton = document.querySelector(".btn");
+// var cardText = document.querySelector(".card-text");
+
+var starterPara = document.getElementById("starter-para");
+// //var buttonGroup = document.getElementById("button-group");
+//     var answer1 = document.getElementById("answer-1");
+//     var answer2 = document.getElementById("answer-2");
+//     var answer3 = document.getElementById("answer-3");
+//     var answer4 = document.getElementById("answer-4");
+var resultPara = document.getElementById("result-para");
+var startButton = document.getElementById("start-button");
 
 var correctAnswer = "";
 var incorrectAnswer = "";
 var correctAnswerTotal = 0;
 
+var i = 0;
 
     // Need to store the questions and their answers as objects within an array
         // Note: Questions and Answers pulled from:
@@ -30,29 +39,30 @@ var correctAnswerTotal = 0;
 var questionAnswer = [
     {
         Question: "Javascript is a _____ -side programming language.",
-        Answer1: "Client",
-        Answer1Answer: "Incorrect",
-        Answer2: "Server",
-        Answer2Answer: "Incorrect",
-        Answer3: "Both",
-        Answer3Answer: "Correct",
-        Answer4: "None",
-        Answer4Answer: "Incorrect",
+        Answers: ["Client", "Server", "Both", "None"],
+        Correct: 2 
     },
     {
         Question: "Which of the following will write the message 'Hello DataFlair!' in an alert box?",
-        Answer1: "alertBox('Hello DataFlair!');",
-        Answer2: "alert(Hello DataFlair!);",
-        Answer3: "msgAlert('Hello DataFlair!');",
-        Answer4: "alert('Hello DataFlair!');"
+        Answers: ["alertBox('Hello DataFlair!');", "alert(Hello DataFlair!);", "msgAlert('Hello DataFlair!');", "alert('Hello DataFlair!');"],
+        Correct: 3
     }
 ];
+
+
+
+// Hide buttons on landing page
+
+// window.onload = function() {
+//     buttonGroup.style.display = "none";
+// }
+
 
     // Need an initializing function to:
         // When landing page start quiz button is clicked, then it changes the page to the first question
 
-cardButton.addEventListener("click", function() {
-    displayQA();
+startButton.addEventListener("click", function() {
+    displayQA(i);
 })
 
     // Need a secondary function to:
@@ -64,21 +74,177 @@ cardButton.addEventListener("click", function() {
                 // Tally in the background how many are incorrect
                 // And subtract 10 seconds from the timer
 
-function displayQA() {
+
+
+function displayQA(idx) {
     console.log("Hey");
 
-    cardBody.style.textAlign = "left";
-    cardTitle.textContent = questionAnswer[0].question;
-    cardText.appendChild(questionAnswer[0].Answer1);
-    questionAnswer[0].Answer1.appendChild(questionAnswer[0].Answer2);
-    questionAnswer[0].Answer2.appendChild(questionAnswer[0].Answer3);
-    questionAnswer[0].Answer3.appendChild(questionAnswer[0].Answer4);
+    // cardBody.style.textAlign = "left";
 
-    if ((questionAnswer[0].Answer1.addEventListener("click") === true) && (questionAnswer[0].Answer1Answer === "Correct")) {
+    // textContent the question and the 4 answers
 
+    // Question: "Javascript is a _____ -side programming language.",
+    // Answers: ["Client", "Server", "Both", "None"],
+    // Correct: Answers[2] 
+
+
+
+    
+    var currentQuestionAnswer = questionAnswer[idx];
+
+    starterPara.textContent = "";
+    cardTitle.textContent = currentQuestionAnswer.Question;
+
+    var buttonGroupDiv = document.createElement("div");
+    buttonGroupDiv.id = "button-group";
+    document.querySelector(".card-text").appendChild(buttonGroupDiv);
+    
+    // for (a = 0; a < 4; a++) {
+    //     var example(a) = document.createElement("button");
+    //     example(a).className = "btn btn-primary";
+    //     a.id = "answer-" + a;
+    //     a.onclick = function () {console.log("yo");};
+    //     document.getElementById("button-group").appendChild(a);
+    // }
+
+    for (b = 0; b < currentQuestionAnswer.Answers.length; b++) {
+        var currentAnswer = currentQuestionAnswer.Answers[b];
+
+        var answer = document.createElement("button");
+        answer.textContent = currentAnswer;
+        answer.className = "btn btn-primary";
+        answer.id = "answer-" + b;
+        answer.onclick = function () {
+            nextQuestion();
+        }
+        document.getElementById("button-group").appendChild(answer);
     }
-
 }
+
+function nextQuestion() {
+    console.log("YoYoYo");
+    if (i < questionAnswer.length) {
+        
+        i++;
+        if (i < questionAnswer.length) {
+            displayQA(i);
+        }
+    } else {
+        function done() {
+            console.log("Done");
+        }
+    }
+}
+
+
+/*
+
+    () => { i++ };
+
+    var answer1 = document.createElement("button");
+    answer1.className = "btn btn-primary";
+    answer1.id = "answer-1";
+    answer1.onclick = function () {console.log("yo");};
+    document.getElementById("button-group").appendChild(answer1);
+
+    var answer2 = document.createElement("button");
+    answer2.className = "btn btn-primary";
+    answer2.id = "answer-2";
+    answer2.onclick = function () {console.log("yo");};
+    document.getElementById("button-group").appendChild(answer2);
+
+    var answer3 = document.createElement("button");
+    answer3.className = "btn btn-primary";
+    answer3.id = "answer-3";
+    answer3.onclick = function () {console.log("yo");};
+    document.getElementById("button-group").appendChild(answer3);
+
+    var answer4 = document.createElement("button");
+    answer4.className = "btn btn-primary";
+    answer4.id = "answer-4";
+    answer4.onclick = function () {console.log("yo");};
+    document.getElementById("button-group").appendChild(answer4);
+
+
+    answer1.textContent = questionAnswer[i].Answers[i];
+    answer2.textContent = questionAnswer[i].Answers[i+1];
+    answer3.textContent = questionAnswer[i].Answers[i+2];
+    answer4.textContent = questionAnswer[i].Answers[i+3];
+*/
+    // for (j = 0; j < 4; j++) {
+    //     document.querySelector(".btn").textContent = questionAnswer[i].Answers[j];
+
+        
+
+    //     // var starterInput = document.createElement("button");
+    //     // starterInput.textContent = questionAnswer[i].Answers[j];
+    //     // document.body.appendChild(starterInput);
+
+
+
+
+
+    
+         
+    // }  
+
+
+//function checkAnswer(result) {
+    // 1, 2, 3, 4
+//}
+    
+
+    // once the four answers are textContented, turn them into buttons
+
+    // questionAnswer[i].Answer[j + 1]Answer)
+    // if ((questionAnswer[i].Answer[j + 1]Answer) === "Correct") {
+
+    // } 
+    // when buttons are clicked:
+        // check against the their answer value and say either correct or incorrect on the next page
+        // bring the user to the next set of question/answers
+
+
+
+
+
+
+
+
+
+
+
+
+
+//     cardTitle.textContent = questionAnswer[i].question;
+//     cardText.appendChild(questionAnswer[i].Answer1);
+//     questionAnswer[i].Answer1.appendChild(questionAnswer[i].Answer2);
+//     questionAnswer[i].Answer2.appendChild(questionAnswer[i].Answer3);
+//     questionAnswer[i].Answer3.appendChild(questionAnswer[i].Answer4);
+
+    
+//     questionAnswer[i].Answer1.addEventListener("click", function(){
+
+//     })
+
+
+
+//     for (i = 0; i < questionAnswer.length; i++) {
+
+//     }
+
+
+//     cardTitle.textContent = questionAnswer[0].question;
+//     cardText.appendChild(questionAnswer[0].Answer1);
+//     questionAnswer[0].Answer1.appendChild(questionAnswer[0].Answer2);
+//     questionAnswer[0].Answer2.appendChild(questionAnswer[0].Answer3);
+//     questionAnswer[0].Answer3.appendChild(questionAnswer[0].Answer4);
+
+//     if ((questionAnswer[0].Answer1.addEventListener("click") === true) && (questionAnswer[0].Answer1Answer === "Correct")) {
+
+//     }
+
+// }
 
 // III. Summary page:
     // "All Done!" Header

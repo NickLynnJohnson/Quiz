@@ -25,6 +25,13 @@
     border: none;
 }
 
+
+/* Better way to style button color? */
+
+#button-group button {
+    display: block;
+}
+
 .btn-primary {
     color: #fff;
     background-color: #7952b3;
