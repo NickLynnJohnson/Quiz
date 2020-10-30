@@ -17,20 +17,27 @@ var cardBody = document.querySelector(".card-body");
 var cardTitle = document.querySelector(".card-title");
 // var cardText = document.querySelector(".card-text");
 
-var starterPara = document.getElementById("starter-para");
+
 // //var buttonGroup = document.getElementById("button-group");
 //     var answer1 = document.getElementById("answer-1");
 //     var answer2 = document.getElementById("answer-2");
 //     var answer3 = document.getElementById("answer-3");
 //     var answer4 = document.getElementById("answer-4");
 var resultPara = document.getElementById("result-para");
-var startButton = document.getElementById("start-button");
+
 
 var correctAnswer = "";
 var incorrectAnswer = "";
 var correctAnswerTotal = 0;
 
 var i = 0;
+
+var mainText = document.getElementById("main-text");
+var landingTitle = document.getElementById("landing-title");
+var starterPara = document.getElementById("starter-para");
+var startButton = document.getElementById("start-button");
+
+
 
     // Need to store the questions and their answers as objects within an array
         // Note: Questions and Answers pulled from:
@@ -87,20 +94,21 @@ function displayQA(idx) {
     // Answers: ["Client", "Server", "Both", "None"],
     // Correct: Answers[2] 
     
-
-
-    
-    var currentQuestionAnswer = questionAnswer[idx];
-    cardTitle.textContent = currentQuestionAnswer.Question;
-
-    //starterPara.textContent = "";
+    landingTitle.remove();
     starterPara.remove();
     startButton.remove();
-    
 
+    var currentQuestionAnswer = questionAnswer[idx];
+
+    var questionTitle = document.createElement("h4");
+    questionTitle.className = "main-padding";
+    questionTitle.id = "question-title-id";
+    questionTitle.textContent = currentQuestionAnswer.Question;
+    mainText.appendChild(questionTitle);
+    
     var buttonGroupDiv = document.createElement("div");
     buttonGroupDiv.id = "button-group";
-    document.querySelector(".card-text").appendChild(buttonGroupDiv);
+    mainText.appendChild(buttonGroupDiv);
     
     // for (a = 0; a < 4; a++) {
     //     var example(a) = document.createElement("button");
@@ -111,6 +119,7 @@ function displayQA(idx) {
     // }
 
     for (b = 0; b < currentQuestionAnswer.Answers.length; b++) {
+
         var currentAnswer = currentQuestionAnswer.Answers[b];
 
         var answer = document.createElement("button");
@@ -128,8 +137,9 @@ function displayQA(idx) {
 
 function nextQuestion() {
     console.log("YoYoYo");
-
     
+    document.getElementById("question-title-id").remove();
+    document.getElementById("button-group").remove();
     
     //for (c = 0; c < questionAnswer.length; c++)
     // if one of those answers is clicked, check if it is correct or incorrect
@@ -146,7 +156,6 @@ function nextQuestion() {
 
 
     if (i < questionAnswer.length) {
-        document.getElementById("button-group").remove();
         displayQA(i);
 
     } else {
