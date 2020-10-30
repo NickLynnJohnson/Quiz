@@ -86,14 +86,17 @@ function displayQA(idx) {
     // Question: "Javascript is a _____ -side programming language.",
     // Answers: ["Client", "Server", "Both", "None"],
     // Correct: Answers[2] 
-
+    
 
 
     
     var currentQuestionAnswer = questionAnswer[idx];
-
-    starterPara.textContent = "";
     cardTitle.textContent = currentQuestionAnswer.Question;
+
+    //starterPara.textContent = "";
+    starterPara.remove();
+    startButton.remove();
+    
 
     var buttonGroupDiv = document.createElement("div");
     buttonGroupDiv.id = "button-group";
@@ -114,27 +117,59 @@ function displayQA(idx) {
         answer.textContent = currentAnswer;
         answer.className = "btn btn-primary";
         answer.id = "answer-" + b;
+
         answer.onclick = function () {
+            
             nextQuestion();
         }
-        document.getElementById("button-group").appendChild(answer);
+        document.getElementById("button-group").appendChild(answer); 
     }
 }
 
 function nextQuestion() {
     console.log("YoYoYo");
+
+    
+    
+    //for (c = 0; c < questionAnswer.length; c++)
+    // if one of those answers is clicked, check if it is correct or incorrect
+        // check to see if it is correct by comparing the position number in the parent.Answers array equals the value of the parent.correct property
+    // if it is correct, 
+        // tally +1 to total
+        // on next page indicate "Correct!" at bottom of screen with a <hr> above it
+    // if it is incorrect, 
+        // tally +0 to total
+        // on next page indicate "Incorrect!" at bottom of screen with a <hr> above it
+
+
+    i++;
+
+
     if (i < questionAnswer.length) {
-        
-        i++;
-        if (i < questionAnswer.length) {
-            displayQA(i);
-        }
+        document.getElementById("button-group").remove();
+        displayQA(i);
+
     } else {
-        function done() {
-            console.log("Done");
-        }
-    }
+        //function done() {
+         //   console.log("Done");
+         console.log("this is final");
+     }
 }
+
+
+
+// if (i < questionAnswer.length) {
+        
+//     i++;
+//     if (i < questionAnswer.length) {
+//         displayQA(i);
+//     }
+// } else {
+//     function done() {
+//         console.log("Done");
+//     }
+// }
+
 
 
 /*

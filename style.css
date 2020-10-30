@@ -1,5 +1,8 @@
 
 
+.page-header {
+    padding: 0px 0px 100px 0px;
+}
 
 .purple-high-score {
     color: #7952b3; 
@@ -21,9 +24,25 @@
   }
 */
 
-.card {
+/* .card {
     border: none;
+} */
+
+.container {
+    text-align: center;
 }
+
+.main-padding {
+    padding: 0px 0px 10px 0px;
+}
+
+#starter-para {
+    display: inline-block;
+    max-width: 45%;
+}
+    
+
+
 
 
 /* Better way to style button color? */
