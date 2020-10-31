@@ -1,5 +1,3 @@
-
-
 // I. Landing page (and throughout each other page):
     // 1. View Highscores function (top left placement)
         // When clicked it goes to a page that shows the initials and score amount total
@@ -8,40 +6,20 @@
         // Set time to 180 seconds and decrement by 1 second
         // If a question is incorrect, subtract 10 seconds
 
-// II. Display of questions:
+// Top right timer
 
-    // Need to create variables in JS based on their counterparts in HTML
-
-var cardParentDiv = document.querySelector(".card");
-var cardBody = document.querySelector(".card-body");
-var cardTitle = document.querySelector(".card-title");
-// var cardText = document.querySelector(".card-text");
+var clockTimer = document.getElementById("clock-timer");
 
 
-// //var buttonGroup = document.getElementById("button-group");
-//     var answer1 = document.getElementById("answer-1");
-//     var answer2 = document.getElementById("answer-2");
-//     var answer3 = document.getElementById("answer-3");
-//     var answer4 = document.getElementById("answer-4");
-var resultPara = document.getElementById("result-para");
-
-
-var correctAnswer = "";
-var incorrectAnswer = "";
-var correctAnswerTotal = 0;
-
-var i = 0;
-
+var mainContainer = document.querySelector(".container");
 var mainText = document.getElementById("main-text");
 var landingTitle = document.getElementById("landing-title");
 var starterPara = document.getElementById("starter-para");
 var startButton = document.getElementById("start-button");
 
+var i = 0;
 
-
-    // Need to store the questions and their answers as objects within an array
-        // Note: Questions and Answers pulled from:
-            // https://data-flair.training/blogs/javascript-quiz/
+// Note: Questions and Answers pulled from: https://data-flair.training/blogs/javascript-quiz/
 
 var questionAnswer = [
     {
@@ -53,8 +31,34 @@ var questionAnswer = [
         Question: "Which of the following will write the message 'Hello DataFlair!' in an alert box?",
         Answers: ["alertBox('Hello DataFlair!');", "alert(Hello DataFlair!);", "msgAlert('Hello DataFlair!');", "alert('Hello DataFlair!');"],
         Correct: 3
+    },
+    {
+        Question: "How do you find the minimum of x and y using JavaScript?",
+        Answers: ["min(x,y);", "Math.min(x,y)", "Math.min(xy)", "min(xy):"],
+        Correct: 2
+
     }
 ];
+
+var captainHook = [
+    "assets/images/1_hook_begins_1.jpg",
+    "assets/images/2_hook_clock.jpg"
+]
+
+
+
+var correctAnswer = "";
+var incorrectAnswer = "";
+var correctAnswerTotal = 0;
+
+
+
+
+
+
+
+
+
 
 
 
@@ -69,8 +73,41 @@ var questionAnswer = [
         // When landing page start quiz button is clicked, then it changes the page to the first question
 
 startButton.addEventListener("click", function() {
+
+    landingTitle.remove();
+    starterPara.remove();
+    startButton.remove();
+
+    startClock();
     displayQA(i);
+    
 })
+
+var totalSeconds = 100;
+
+function startClock() {
+    
+    var timeKept = setInterval(clockStarter, 1000);
+
+    function clockStarter() {
+        
+        totalSeconds = totalSeconds - 1;
+
+        if (totalSeconds <= 0) {
+        clearInterval(timeKept);
+        }
+        clockTimer.textContent = totalSeconds + " seconds";
+    }
+    
+}
+
+
+
+
+
+
+
+
 
     // Need a secondary function to:
         // Display a question pulling from the array, put it on top, bold it
@@ -94,9 +131,11 @@ function displayQA(idx) {
     // Answers: ["Client", "Server", "Both", "None"],
     // Correct: Answers[2] 
     
-    landingTitle.remove();
-    starterPara.remove();
-    startButton.remove();
+    
+
+    
+
+    
 
     var currentQuestionAnswer = questionAnswer[idx];
 
@@ -106,9 +145,48 @@ function displayQA(idx) {
     questionTitle.textContent = currentQuestionAnswer.Question;
     mainText.appendChild(questionTitle);
     
+    var bootRow = document.createElement("div");
+    bootRow.className = "row";
+    mainText.appendChild(bootRow);
+
+    var leftBootCol = document.createElement("div");
+    leftBootCol.className = "col-sm-3";
+    bootRow.appendChild(leftBootCol);
+
+    var rightBootCol = document.createElement("div");
+    rightBootCol.className = "col-sm-9";
+    rightBootCol.id = "hook-picture";
+    bootRow.appendChild(rightBootCol);
+
     var buttonGroupDiv = document.createElement("div");
     buttonGroupDiv.id = "button-group";
-    mainText.appendChild(buttonGroupDiv);
+    leftBootCol.appendChild(buttonGroupDiv);
+
+    
+
+    // for (totalSeconds = totalSeconds; totalSeconds >= 0; totalSeconds = totalSeconds - 10)
+    if (totalSeconds === totalSeconds) {
+        var hookImage = document.createElement("img");
+        hookImage.style.width = "100%";
+        hookImage.style.height = "100%";
+        hookImage.src = captainHook[0];
+        rightBootCol.appendChild(hookImage);
+    } else if (totalSeconds == 90) {
+        hookImage.remove();
+        var hookImage = document.createElement("img");
+        hookImage.style.width = "100%";
+        hookImage.style.height = "100%";
+        hookImage.src = captainHook[1];
+        rightBootCol.appendChild(hookImage);
+    }
+
+    // if (i === 0) {
+    //     var answerBottomDiv = document.createElement("div");
+    //     answerBottomDiv.id = "answer-bottom-div";
+    //     mainContainer.appendChild(answerBottomDiv);
+    // } else {
+    //     document.getElementById("answer-bottom-div").remove();
+    // }
     
     // for (a = 0; a < 4; a++) {
     //     var example(a) = document.createElement("button");
@@ -125,21 +203,58 @@ function displayQA(idx) {
         var answer = document.createElement("button");
         answer.textContent = currentAnswer;
         answer.className = "btn btn-primary";
-        answer.id = "answer-" + b;
+        answer.id = b;
+        document.getElementById("button-group").appendChild(answer);
+
+        
+
+
 
         answer.onclick = function () {
+
             
-            nextQuestion();
-        }
-        document.getElementById("button-group").appendChild(answer); 
+
+            if (this.id === currentQuestionAnswer.Correct) {
+                var correctAnswer = "Correct!";
+                nextQuestion(correctAnswer);
+            } else {
+                var incorrectAnswer = "Incorrect!";
+                nextQuestion(incorrectAnswer);
+            } 
+        }   
     }
 }
 
-function nextQuestion() {
+function nextQuestion(clickedAnswer) {
     console.log("YoYoYo");
-    
+
     document.getElementById("question-title-id").remove();
     document.getElementById("button-group").remove();
+
+    if (clickedAnswer === "Correct!") {
+
+    } else {
+        totalSeconds = totalSeconds - 10;
+
+
+    }
+
+    
+
+    // var answerBottomDiv = document.createElement("div");
+    //     answerBottomDiv.id = "answer-bottom-div";
+    //     answerBottomDiv.textContent = clickedAnswer;
+    //     mainContainer.appendChild(answerBottomDiv);
+
+    //document.getElementById("answer-bottom-div").remove();
+    
+    
+
+    // if (clickedId === )
+
+    // if (this.id === currentQuestionAnswer.Correct) {
+    //     alert("Correct");
+    // }
     
     //for (c = 0; c < questionAnswer.length; c++)
     // if one of those answers is clicked, check if it is correct or incorrect
@@ -155,8 +270,20 @@ function nextQuestion() {
     i++;
 
 
+
+
     if (i < questionAnswer.length) {
+
+        // var showPreviousClickedGrade = clickedAnswer;
+
+        // answerBottomDiv.textContent = clickedAnswer;
+
+        
+
+        //document.getElementById("answer-bottom-div").remove();
+
         displayQA(i);
+
 
     } else {
         //function done() {
@@ -164,6 +291,9 @@ function nextQuestion() {
          console.log("this is final");
      }
 }
+
+
+
 
 
 
