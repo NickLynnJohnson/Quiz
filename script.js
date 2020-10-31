@@ -1,27 +1,17 @@
-// I. Landing page (and throughout each other page):
-    // 1. View Highscores function (top left placement)
-        // When clicked it goes to a page that shows the initials and score amount total
-    // 2. Time limit countdown function (top right placement)
-        // Starts when start quiz button is clicked
-        // Set time to 180 seconds and decrement by 1 second
-        // If a question is incorrect, subtract 10 seconds
-
-// Top right timer
-
 var clockTimer = document.getElementById("clock-timer");
-
-
 var mainContainer = document.querySelector(".container");
 var mainText = document.getElementById("main-text");
 var landingTitle = document.getElementById("landing-title");
 var starterPara = document.getElementById("starter-para");
 var startButton = document.getElementById("start-button");
 
-var i = 0;
+var totalSeconds = 100;
+var positionInArray = 0;
+var correctTotal = 0;
 
-// Note: Questions and Answers pulled from: https://data-flair.training/blogs/javascript-quiz/
+// Note: Question and Answer content pulled from: https://data-flair.training/blogs/javascript-quiz/
 
-var questionAnswer = [
+var questionAnswersCorrect = [
     {
         Question: "Javascript is a _____ -side programming language.",
         Answers: ["Client", "Server", "Both", "None"],
@@ -36,182 +26,111 @@ var questionAnswer = [
         Question: "How do you find the minimum of x and y using JavaScript?",
         Answers: ["min(x,y);", "Math.min(x,y)", "Math.min(xy)", "min(xy):"],
         Correct: 2
-
     }
 ];
 
-var captainHook = [
-    "assets/images/1_hook_begins_1.jpg",
-    "assets/images/2_hook_clock.jpg"
-]
-
-
-
-var correctAnswer = "";
-var incorrectAnswer = "";
-var correctAnswerTotal = 0;
-
-
-
-
-
-
-
-
-
-
-
-
-// Hide buttons on landing page
-
-// window.onload = function() {
-//     buttonGroup.style.display = "none";
-// }
-
-
-    // Need an initializing function to:
-        // When landing page start quiz button is clicked, then it changes the page to the first question
+// Landing page initializer begins
 
 startButton.addEventListener("click", function() {
+    removeLandingPage();
+    startTheTime();
+    displayQA(positionOfQuestion);
+});
 
+function removeLandingPage() {
     landingTitle.remove();
     starterPara.remove();
     startButton.remove();
-
-    startClock();
-    displayQA(i);
-    
-})
-
-var totalSeconds = 100;
-
-function startClock() {
-    
-    var timeKept = setInterval(clockStarter, 1000);
-
-    function clockStarter() {
-        
-        totalSeconds = totalSeconds - 1;
-
-        if (totalSeconds <= 0) {
-        clearInterval(timeKept);
-        }
-        clockTimer.textContent = totalSeconds + " seconds";
-    }
-    
 }
 
+function startTheTime() {
+    var timerInitiator = setInterval(clockStarter, 1000);
+    function clockStarter() {
+        totalSeconds = totalSeconds - 1;
+        clockTimer.textContent = totalSeconds + " seconds";
+        clearInterval(timerInitiator);
+    }
+}
 
+// Building block functions referenced by DisplayQA
 
-
-
-
-
-
-
-    // Need a secondary function to:
-        // Display a question pulling from the array, put it on top, bold it
-        // Display its four possible answers as possible clicks
-            // If a correct answer is clicked, display "Correct!" below the four questions
-                // Tally in the background how many are correct
-            // If an incorrect answer is clicked, display "Incorrect! 10 Seconds subtracted." below the four questions
-                // Tally in the background how many are incorrect
-                // And subtract 10 seconds from the timer
-
-
-
-function displayQA(idx) {
-    console.log("Hey");
-
-    // cardBody.style.textAlign = "left";
-
-    // textContent the question and the 4 answers
-
-    // Question: "Javascript is a _____ -side programming language.",
-    // Answers: ["Client", "Server", "Both", "None"],
-    // Correct: Answers[2] 
-    
-    
-
-    
-
-    
-
-    var currentQuestionAnswer = questionAnswer[idx];
-
+function buildNewQuestion() {
     var questionTitle = document.createElement("h4");
     questionTitle.className = "main-padding";
     questionTitle.id = "question-title-id";
-    questionTitle.textContent = currentQuestionAnswer.Question;
     mainText.appendChild(questionTitle);
-    
-    var bootRow = document.createElement("div");
-    bootRow.className = "row";
-    mainText.appendChild(bootRow);
+}
 
-    var leftBootCol = document.createElement("div");
-    leftBootCol.className = "col-sm-3";
-    bootRow.appendChild(leftBootCol);
+function buildNewAnswerGroup() {
+    var NewAnswerGroup = document.createElement("div");
+    NewAnswerGroup.id = "new-answer-group";
+    mainText.appendChild(NewAnswerGroup);
+}
 
-    var rightBootCol = document.createElement("div");
-    rightBootCol.className = "col-sm-9";
-    rightBootCol.id = "hook-picture";
-    bootRow.appendChild(rightBootCol);
+function insertUniqueAnswers() {
+    var uniqueAnswer = document.createElement("button");
+    uniqueAnswer.textContent = answerFromForLoop;
+    uniqueAnswer.className = "btn btn-primary";
+    uniqueAnswer.id = positionInArray;
+    document.getElementById("new-answer-group").appendChild(uniqueAnswer);   
+}
 
-    var buttonGroupDiv = document.createElement("div");
-    buttonGroupDiv.id = "button-group";
-    leftBootCol.appendChild(buttonGroupDiv);
-
-    
-
-    // for (totalSeconds = totalSeconds; totalSeconds >= 0; totalSeconds = totalSeconds - 10)
-    if (totalSeconds === totalSeconds) {
-        var hookImage = document.createElement("img");
-        hookImage.style.width = "100%";
-        hookImage.style.height = "100%";
-        hookImage.src = captainHook[0];
-        rightBootCol.appendChild(hookImage);
-    } else if (totalSeconds == 90) {
-        hookImage.remove();
-        var hookImage = document.createElement("img");
-        hookImage.style.width = "100%";
-        hookImage.style.height = "100%";
-        hookImage.src = captainHook[1];
-        rightBootCol.appendChild(hookImage);
+function clickedOnAnswer() {
+    if (alreadyClickedAnswer === null) {
+        // Do nothing
+    } else {
+        clickedAnswerMessage.remove();
     }
 
-    // if (i === 0) {
-    //     var answerBottomDiv = document.createElement("div");
-    //     answerBottomDiv.id = "answer-bottom-div";
-    //     mainContainer.appendChild(answerBottomDiv);
-    // } else {
-    //     document.getElementById("answer-bottom-div").remove();
-    // }
+    if (idOfClickedOnAnswer === valueOfQACorrect) {
+        var correctAnswer = "Correct!";
+        triggerNextQA(correctAnswer);
+    } else {
+        var incorrectAnswer = "Incorrect!";
+        triggerNextQA(incorrectAnswer);
+    }
+}
+
+// 
+
+function displayQA(positionInMainArray) {
+
+
+    buildNewQuestion();
+    buildNewAnswerGroup();
+    insertUniqueAnswers();
+    clickedOnAnswer();
+
     
-    // for (a = 0; a < 4; a++) {
-    //     var example(a) = document.createElement("button");
-    //     example(a).className = "btn btn-primary";
-    //     a.id = "answer-" + a;
-    //     a.onclick = function () {console.log("yo");};
-    //     document.getElementById("button-group").appendChild(a);
-    // }
+    var answerBottomDiv = document.getElementById("answer-bottom-div");
+    
+    var currentQuestionAnswer = questionAnswer[positionInMainArray];
+
+    
+
+
+    questionTitle.textContent = currentQuestionAnswer.Question;
+    
 
     for (b = 0; b < currentQuestionAnswer.Answers.length; b++) {
 
         var currentAnswer = currentQuestionAnswer.Answers[b];
 
-        var answer = document.createElement("button");
-        answer.textContent = currentAnswer;
-        answer.className = "btn btn-primary";
-        answer.id = b;
-        document.getElementById("button-group").appendChild(answer);
+            
+        var a = currentAnswer;
+        var z = b === currentQuestionAnswer.Correct;
+        insertUniqueAnswers (a, z);
+
+
 
         
 
-
-
         answer.onclick = function () {
-
+            if (answerBottomDiv === null) {
+                alert("Null?");
+            } else {
+                answerBottomDiv.remove();
+            }
             
 
             if (this.id === currentQuestionAnswer.Correct) {
@@ -221,9 +140,10 @@ function displayQA(idx) {
                 var incorrectAnswer = "Incorrect!";
                 nextQuestion(incorrectAnswer);
             } 
-        }   
-    }
+        } 
+    }  
 }
+
 
 function nextQuestion(clickedAnswer) {
     console.log("YoYoYo");
@@ -232,211 +152,33 @@ function nextQuestion(clickedAnswer) {
     document.getElementById("button-group").remove();
 
     if (clickedAnswer === "Correct!") {
-
+        correctTotal++;
     } else {
         totalSeconds = totalSeconds - 10;
-
-
+        
     }
-
-    
-
-    // var answerBottomDiv = document.createElement("div");
-    //     answerBottomDiv.id = "answer-bottom-div";
-    //     answerBottomDiv.textContent = clickedAnswer;
-    //     mainContainer.appendChild(answerBottomDiv);
-
-    //document.getElementById("answer-bottom-div").remove();
-    
-    
-
-    // if (clickedId === )
-
-    // if (this.id === currentQuestionAnswer.Correct) {
-    //     alert("Correct");
-    // }
-    
-    //for (c = 0; c < questionAnswer.length; c++)
-    // if one of those answers is clicked, check if it is correct or incorrect
-        // check to see if it is correct by comparing the position number in the parent.Answers array equals the value of the parent.correct property
-    // if it is correct, 
-        // tally +1 to total
-        // on next page indicate "Correct!" at bottom of screen with a <hr> above it
-    // if it is incorrect, 
-        // tally +0 to total
-        // on next page indicate "Incorrect!" at bottom of screen with a <hr> above it
-
 
     i++;
 
-
-
-
     if (i < questionAnswer.length) {
 
-        // var showPreviousClickedGrade = clickedAnswer;
-
-        // answerBottomDiv.textContent = clickedAnswer;
-
-        
-
-        //document.getElementById("answer-bottom-div").remove();
+        var clickedAnswerMessage = document.createElement("div");
+        clickedAnswerMessage.id = "answer-bottom-div";
+        clickedAnswerMessage.textContent = clickedAnswer;
+        mainContainer.appendChild(clickedAnswerMessage);
 
         displayQA(i);
 
 
     } else {
-        //function done() {
-         //   console.log("Done");
-         console.log("this is final");
+         allDone();
      }
 }
 
 
+function allDone() {
 
-
-
-
-// if (i < questionAnswer.length) {
-        
-//     i++;
-//     if (i < questionAnswer.length) {
-//         displayQA(i);
-//     }
-// } else {
-//     function done() {
-//         console.log("Done");
-//     }
-// }
-
-
-
-/*
-
-    () => { i++ };
-
-    var answer1 = document.createElement("button");
-    answer1.className = "btn btn-primary";
-    answer1.id = "answer-1";
-    answer1.onclick = function () {console.log("yo");};
-    document.getElementById("button-group").appendChild(answer1);
-
-    var answer2 = document.createElement("button");
-    answer2.className = "btn btn-primary";
-    answer2.id = "answer-2";
-    answer2.onclick = function () {console.log("yo");};
-    document.getElementById("button-group").appendChild(answer2);
-
-    var answer3 = document.createElement("button");
-    answer3.className = "btn btn-primary";
-    answer3.id = "answer-3";
-    answer3.onclick = function () {console.log("yo");};
-    document.getElementById("button-group").appendChild(answer3);
-
-    var answer4 = document.createElement("button");
-    answer4.className = "btn btn-primary";
-    answer4.id = "answer-4";
-    answer4.onclick = function () {console.log("yo");};
-    document.getElementById("button-group").appendChild(answer4);
-
-
-    answer1.textContent = questionAnswer[i].Answers[i];
-    answer2.textContent = questionAnswer[i].Answers[i+1];
-    answer3.textContent = questionAnswer[i].Answers[i+2];
-    answer4.textContent = questionAnswer[i].Answers[i+3];
-*/
-    // for (j = 0; j < 4; j++) {
-    //     document.querySelector(".btn").textContent = questionAnswer[i].Answers[j];
-
-        
-
-    //     // var starterInput = document.createElement("button");
-    //     // starterInput.textContent = questionAnswer[i].Answers[j];
-    //     // document.body.appendChild(starterInput);
-
-
-
-
-
-    
-         
-    // }  
-
-
-//function checkAnswer(result) {
-    // 1, 2, 3, 4
-//}
-    
-
-    // once the four answers are textContented, turn them into buttons
-
-    // questionAnswer[i].Answer[j + 1]Answer)
-    // if ((questionAnswer[i].Answer[j + 1]Answer) === "Correct") {
-
-    // } 
-    // when buttons are clicked:
-        // check against the their answer value and say either correct or incorrect on the next page
-        // bring the user to the next set of question/answers
-
-
-
-
-
-
-
-
-
-
-
-
-
-//     cardTitle.textContent = questionAnswer[i].question;
-//     cardText.appendChild(questionAnswer[i].Answer1);
-//     questionAnswer[i].Answer1.appendChild(questionAnswer[i].Answer2);
-//     questionAnswer[i].Answer2.appendChild(questionAnswer[i].Answer3);
-//     questionAnswer[i].Answer3.appendChild(questionAnswer[i].Answer4);
-
-    
-//     questionAnswer[i].Answer1.addEventListener("click", function(){
-
-//     })
-
-
-
-//     for (i = 0; i < questionAnswer.length; i++) {
-
-//     }
-
-
-//     cardTitle.textContent = questionAnswer[0].question;
-//     cardText.appendChild(questionAnswer[0].Answer1);
-//     questionAnswer[0].Answer1.appendChild(questionAnswer[0].Answer2);
-//     questionAnswer[0].Answer2.appendChild(questionAnswer[0].Answer3);
-//     questionAnswer[0].Answer3.appendChild(questionAnswer[0].Answer4);
-
-//     if ((questionAnswer[0].Answer1.addEventListener("click") === true) && (questionAnswer[0].Answer1Answer === "Correct")) {
-
-//     }
-
-// }
-
-// III. Summary page:
-    // "All Done!" Header
-    // Description: "Your total score is (score)."
-    // "Enter initials:"" (input field) (Submit button)
-        // When Submit is clicked, bring user to Highscores page & Remove the top left View Highscores link and top right Clock
-
-// IV. Highscores page:
-    // "Highscores" header
-    // List with faded purple background of "1. AB - 22" for example
-        // This list continues indefinitely based on user session in local storage
-    // "Go Back" button returns to the landing page
-        // Resets the clock
-        // To the right, same line, "Clear Highscores" button removes highscores list under Highscores
-    // Note: On this page the top left "View Highscores" and top right "Time: (Time)" are absent
-
-
-
+}
 
 
 
