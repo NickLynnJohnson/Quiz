@@ -32,15 +32,27 @@ var questionAnswersCorrect = [
         Answers: ["min(x,y);", "Math.min(x,y)", "Math.min(xy)", "min(xy):"],
         Correct: 2
     }
-];
+]; 
 
-// Landing page initializer begins with the "Start Quiz" button 
 
 startButton.addEventListener("click", function() {
+    startTheTime(); 
     removeLandingPage();
-    startTheTime();
     displayQA(index);
+    
 });
+
+function startTheTime() {
+    var timerInitiator = setInterval(clockStarter, 1000);
+    function clockStarter() {
+        if (totalSeconds === 0) {
+            clearInterval(timerInitiator);
+        } else {
+            totalSeconds = totalSeconds - 1;
+            clockTimer.textContent = totalSeconds + " seconds";
+        }   
+    }
+}
 
 function removeLandingPage() {
     landingTitle.remove();
@@ -48,18 +60,9 @@ function removeLandingPage() {
     startButton.remove();
 }
 
-function startTheTime() {
-    var timerInitiator = setInterval(clockStarter, 1000);
-    function clockStarter() {
-        totalSeconds = totalSeconds - 1;
-        clockTimer.textContent = totalSeconds + " seconds";
-        clearInterval(timerInitiator);
-    }
-}
-
 // Building block functions referenced by DisplayQA function farther below
 
-function buildNewQuestion() {
+function buildNewQuestion(objectQACQuestion) {
     var questionTitle = document.createElement("h4");
     questionTitle.className = "main-padding";
     questionTitle.id = "question-title-id";
@@ -71,21 +74,18 @@ function buildNewAnswerGroup() {
     var newAnswerGroup = document.createElement("div");
     newAnswerGroup.id = "new-answer-group";
     mainText.appendChild(newAnswerGroup);
+   
+    // document.getElementById("new-answer-group").style.width = "-50%";
+    document.getElementById("new-answer-group").style.height = "50%";
+    document.getElementById("new-answer-group").style.display = "block";
 }
 
-function insertUniqueAnswers(answerFromForLoop, positionInArray) {
-    var uniqueAnswer = document.createElement("button");
-    uniqueAnswer.textContent = answerFromForLoop;
-    uniqueAnswer.className = "btn btn-primary";
-    uniqueAnswer.id = positionInArray;
-    document.getElementById("new-answer-group").appendChild(uniqueAnswer);   
-}
-
-function clickedOnAnswer(alreadyClickedAnswer, clickedAnswerMessage, idOfClickedOnAnswer, valueOfQACorrect) {
-    if (alreadyClickedAnswer === null) {
+function clickedOnAnswer(alreadyClickedAnswerMessage, idOfClickedOnAnswer, valueOfQACorrect) {
+    console.log("Does this work");
+    if (alreadyClickedAnswerMessage === null) {
         // Do nothing
     } else {
-        clickedAnswerMessage.remove();
+        alreadyClickedAnswerMessage.remove();
     }
 
     if (idOfClickedOnAnswer === valueOfQACorrect) {
@@ -100,24 +100,22 @@ function clickedOnAnswer(alreadyClickedAnswer, clickedAnswerMessage, idOfClicked
 // Function to display new questions and their answers based on "i" position in the questionAnswersCorrect array where "i" is later incremented by 1 when a user clicks on answer
 
 function displayQA(i) {
-    var objectQACQuestion = questionAnswersCorrect[i].Question;
-    var objectQACAnswers = questionAnswersCorrect[i].Answers;
-    buildNewQuestion(objectQACQuestion);
-    buildNewAnswerGroup();
-    
-    // Pull all answers from objectQACAnswers and insert them into the "new-answer-group" div via buildNewAnswerGroup();
-    // "a" is positionInArray
-    for (ans = 0; ans < objectQACAnswers.length; ans++) {
-        var loop = answerFromForLoop; 
-        insertUniqueAnswers(loop, ans);
+    var objectQuestion = questionAnswersCorrect[i].Question;
+    var objectAnswersArray = questionAnswersCorrect[i].Answers;
+    var objectCorrect = questionAnswersCorrect[i].Correct;
+    var previousAnswerMessageDiv = document.getElementById("answer-message-div");
 
-        uniqueAnswer.onClick = function() {
-            var a = alreadyClickedAnswer;
-            var b = clickedAnswerMessage;
-            var c = idOfClickedOnAnswer;
-            var d = valueOfQACorrect;
-            clickedOnAnswer(a, b, c, d);
-        }
+    buildNewQuestion(objectQuestion);
+    buildNewAnswerGroup();
+    // Pull all answers from objectAnswersArray and insert them into the "new-answer-group" div via buildNewAnswerGroup();
+    // "a" is positionInArray
+    for (ans = 0; ans < objectAnswersArray.length; ans++) {
+        var objectAnswerContent = objectAnswersArray[ans];
+        var uniqueAnswer = document.createElement("button");
+        uniqueAnswer.textContent = objectAnswerContent;
+        uniqueAnswer.className = "btn btn-primary chosen-button";
+        uniqueAnswer.id = ans;
+        document.getElementById("new-answer-group").appendChild(uniqueAnswer);  
     }   
 }
 
@@ -141,48 +139,50 @@ function removePreviousQA() {
 }
 
 function createAnswerMessage(chosenAnswer) {
-    var clickedAnswerMessage = document.createElement("div");
-    clickedAnswerMessage.id = "answer-bottom-div";
-    clickedAnswerMessage.textContent = chosenAnswer;
-    mainContainer.appendChild(clickedAnswerMessage);   
+    var clickedAnswerMessageDiv = document.createElement("div");
+    clickedAnswerMessageDiv.id = "answer-message-div";
+    clickedAnswerMessageDiv.textContent = chosenAnswer;
+    mainContainer.appendChild(clickedAnswerMessageDiv);   
 }
 
 // Function that's triggered by the user clicking on an answer. If answer is correct, increment points via correctTotalTally. If answer is incorrect, penalize user's time via incorrectTimePenalty.
     // Then, 1) if there are remaining questions in the questionAnswersCorrect array, restart displayQA(i) which makes a new question and its answers 
-    // or 2) stop restarting displayQA(i) once all questions have been asked and run the finishedWithQuiz function
-
-
+    // or 2) stop restarting displayQA(i) once all questions have been asked OR time is out, and run the finishedWithQuiz function
 
 function triggerNextQA(clickedAnswerOption) {
-    
+    correctTotalTally(clickedAnswerOption);
+    incorrectTimePenalty(clickedAnswerOption);
+    removePreviousQA();
 
-    
-
-    if (clickedAnswer === "Correct!") {
-        correctTotal++;
-    } else {
-        totalSeconds = totalSeconds - 10;
-        
-    }
-
+    // Increment "i" to shift to the next object in the questionAnswersCorrect array
     i++;
 
-    if (i < questionAnswer.length) {
-
-        
-
+    if (i < questionAnswersCorrect.length) {
+        createAnswerMessage(clickedAnswerOption);
         displayQA(i);
-
-
     } else {
         finishedWithQuiz();
      }
 }
 
-
 function finishedWithQuiz() {
-
+    console.log("Almost finished with first part of quiz");
 }
+
+// var tryThis = document.getElementById("1")
+// var chosenButton = document.querySelector(".chosen-button"); 
+
+// console.log(tryThis);
+// console.log(chosenButton);
+
+// document.querySelector(".chosen-button").onclick = function() {
+//     console.log("I was just clicked");
+//     clickedOnAnswer(previousAnswerMessageDiv, ans, objectCorrect);
+// }
+
+
+
+
 
 
 

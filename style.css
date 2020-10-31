@@ -30,6 +30,7 @@
 
 .container {
     text-align: center;
+    width: 50%;
 }
 
 .main-padding {
@@ -47,9 +48,10 @@
 
 /* Better way to style button color? */
 
-#button-group button {
+/* #new-answer-group button {
     display: block;
-}
+    
+} */
 
 .btn-primary {
     color: #fff;
