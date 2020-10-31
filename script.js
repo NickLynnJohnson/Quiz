@@ -5,8 +5,13 @@ var landingTitle = document.getElementById("landing-title");
 var starterPara = document.getElementById("starter-para");
 var startButton = document.getElementById("start-button");
 
+// Note: see "incorrectTimePenalty" function below. If a user clicks on an incorrect answer, 10 seconds are deducted from totalSeconds for each incorrect answer
 var totalSeconds = 100;
-var positionInArray = 0;
+
+// The position in questionAnswersCorrect array is noted by "index"
+var index = 0;
+
+// The total score for a user is the same as how many answers the user got correct
 var correctTotal = 0;
 
 // Note: Question and Answer content pulled from: https://data-flair.training/blogs/javascript-quiz/
@@ -29,12 +34,12 @@ var questionAnswersCorrect = [
     }
 ];
 
-// Landing page initializer begins
+// Landing page initializer begins with the "Start Quiz" button 
 
 startButton.addEventListener("click", function() {
     removeLandingPage();
     startTheTime();
-    displayQA(positionOfQuestion);
+    displayQA(index);
 });
 
 function removeLandingPage() {
@@ -52,22 +57,23 @@ function startTheTime() {
     }
 }
 
-// Building block functions referenced by DisplayQA
+// Building block functions referenced by DisplayQA function farther below
 
 function buildNewQuestion() {
     var questionTitle = document.createElement("h4");
     questionTitle.className = "main-padding";
     questionTitle.id = "question-title-id";
+    questionTitle.textContent = objectQACQuestion;
     mainText.appendChild(questionTitle);
 }
 
 function buildNewAnswerGroup() {
-    var NewAnswerGroup = document.createElement("div");
-    NewAnswerGroup.id = "new-answer-group";
-    mainText.appendChild(NewAnswerGroup);
+    var newAnswerGroup = document.createElement("div");
+    newAnswerGroup.id = "new-answer-group";
+    mainText.appendChild(newAnswerGroup);
 }
 
-function insertUniqueAnswers() {
+function insertUniqueAnswers(answerFromForLoop, positionInArray) {
     var uniqueAnswer = document.createElement("button");
     uniqueAnswer.textContent = answerFromForLoop;
     uniqueAnswer.className = "btn btn-primary";
@@ -75,7 +81,7 @@ function insertUniqueAnswers() {
     document.getElementById("new-answer-group").appendChild(uniqueAnswer);   
 }
 
-function clickedOnAnswer() {
+function clickedOnAnswer(alreadyClickedAnswer, clickedAnswerMessage, idOfClickedOnAnswer, valueOfQACorrect) {
     if (alreadyClickedAnswer === null) {
         // Do nothing
     } else {
@@ -91,65 +97,66 @@ function clickedOnAnswer() {
     }
 }
 
-// 
+// Function to display new questions and their answers based on "i" position in the questionAnswersCorrect array where "i" is later incremented by 1 when a user clicks on answer
 
-function displayQA(positionInMainArray) {
-
-
-    buildNewQuestion();
+function displayQA(i) {
+    var objectQACQuestion = questionAnswersCorrect[i].Question;
+    var objectQACAnswers = questionAnswersCorrect[i].Answers;
+    buildNewQuestion(objectQACQuestion);
     buildNewAnswerGroup();
-    insertUniqueAnswers();
-    clickedOnAnswer();
-
     
-    var answerBottomDiv = document.getElementById("answer-bottom-div");
-    
-    var currentQuestionAnswer = questionAnswer[positionInMainArray];
+    // Pull all answers from objectQACAnswers and insert them into the "new-answer-group" div via buildNewAnswerGroup();
+    // "a" is positionInArray
+    for (ans = 0; ans < objectQACAnswers.length; ans++) {
+        var loop = answerFromForLoop; 
+        insertUniqueAnswers(loop, ans);
 
-    
-
-
-    questionTitle.textContent = currentQuestionAnswer.Question;
-    
-
-    for (b = 0; b < currentQuestionAnswer.Answers.length; b++) {
-
-        var currentAnswer = currentQuestionAnswer.Answers[b];
-
-            
-        var a = currentAnswer;
-        var z = b === currentQuestionAnswer.Correct;
-        insertUniqueAnswers (a, z);
-
-
-
-        
-
-        answer.onclick = function () {
-            if (answerBottomDiv === null) {
-                alert("Null?");
-            } else {
-                answerBottomDiv.remove();
-            }
-            
-
-            if (this.id === currentQuestionAnswer.Correct) {
-                var correctAnswer = "Correct!";
-                nextQuestion(correctAnswer);
-            } else {
-                var incorrectAnswer = "Incorrect!";
-                nextQuestion(incorrectAnswer);
-            } 
-        } 
-    }  
+        uniqueAnswer.onClick = function() {
+            var a = alreadyClickedAnswer;
+            var b = clickedAnswerMessage;
+            var c = idOfClickedOnAnswer;
+            var d = valueOfQACorrect;
+            clickedOnAnswer(a, b, c, d);
+        }
+    }   
 }
 
+// Building block functions referenced by triggerNextQA function farther below
 
-function nextQuestion(clickedAnswer) {
-    console.log("YoYoYo");
+function correctTotalTally(chosenAnswer) {
+    if (chosenAnswer === "Correct!") {
+        correctTotal++;
+    }
+}
 
+function incorrectTimePenalty(chosenAnswer) {
+    if (chosenAnswer !== "Correct!") {
+        totalSeconds = totalSeconds - 10;
+    }
+}
+
+function removePreviousQA() {
     document.getElementById("question-title-id").remove();
-    document.getElementById("button-group").remove();
+    document.getElementById("new-answer-group").remove();
+}
+
+function createAnswerMessage(chosenAnswer) {
+    var clickedAnswerMessage = document.createElement("div");
+    clickedAnswerMessage.id = "answer-bottom-div";
+    clickedAnswerMessage.textContent = chosenAnswer;
+    mainContainer.appendChild(clickedAnswerMessage);   
+}
+
+// Function that's triggered by the user clicking on an answer. If answer is correct, increment points via correctTotalTally. If answer is incorrect, penalize user's time via incorrectTimePenalty.
+    // Then, 1) if there are remaining questions in the questionAnswersCorrect array, restart displayQA(i) which makes a new question and its answers 
+    // or 2) stop restarting displayQA(i) once all questions have been asked and run the finishedWithQuiz function
+
+
+
+function triggerNextQA(clickedAnswerOption) {
+    
+
+    
 
     if (clickedAnswer === "Correct!") {
         correctTotal++;
@@ -162,21 +169,18 @@ function nextQuestion(clickedAnswer) {
 
     if (i < questionAnswer.length) {
 
-        var clickedAnswerMessage = document.createElement("div");
-        clickedAnswerMessage.id = "answer-bottom-div";
-        clickedAnswerMessage.textContent = clickedAnswer;
-        mainContainer.appendChild(clickedAnswerMessage);
+        
 
         displayQA(i);
 
 
     } else {
-         allDone();
+        finishedWithQuiz();
      }
 }
 
 
-function allDone() {
+function finishedWithQuiz() {
 
 }
 
